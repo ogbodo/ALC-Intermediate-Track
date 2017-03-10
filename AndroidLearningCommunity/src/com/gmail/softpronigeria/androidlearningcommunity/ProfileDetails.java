@@ -59,10 +59,8 @@ public class ProfileDetails extends Activity implements OnClickListener {
 			startActivity(Intent.createChooser(intent, "Share"));
 
 		} else if (v.getId() == R.id.text_profile_url) {
-
-			String url = "http://www.example.com";
 			Intent i = new Intent(Intent.ACTION_VIEW);
-			i.setData(Uri.parse(url));
+			i.setData(Uri.parse(userProfile.getProfileURL()));
 			startActivity(i);
 		}
 	}
