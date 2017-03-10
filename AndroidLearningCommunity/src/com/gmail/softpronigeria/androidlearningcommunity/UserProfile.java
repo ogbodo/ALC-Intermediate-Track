@@ -2,16 +2,11 @@ package com.gmail.softpronigeria.androidlearningcommunity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-public class UserProfile implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class UserProfile {
 	private String username;
 	private String profileURL;
 	private Bitmap imgBitmap;
@@ -26,6 +21,14 @@ public class UserProfile implements Serializable {
 	public UserProfile(String username, Bitmap imgBitmap) {
 		super();
 		this.username = username;
+		this.imgBitmap = imgBitmap;
+	}
+
+	public Bitmap getImgBitmap() {
+		return imgBitmap;
+	}
+
+	public void setImgBitmap(Bitmap imgBitmap) {
 		this.imgBitmap = imgBitmap;
 	}
 
@@ -60,7 +63,7 @@ public class UserProfile implements Serializable {
 
 	}
 
-	private void readObject(java.io.ObjectInputStream in) throws IOException,
+	public void readObject(java.io.ObjectInputStream in) throws IOException,
 			ClassNotFoundException {
 
 		int bufferLength = in.readInt();
@@ -82,5 +85,4 @@ public class UserProfile implements Serializable {
 		imgBitmap = BitmapFactory.decodeByteArray(byteArray, 0, bufferLength);
 
 	}
-
 }

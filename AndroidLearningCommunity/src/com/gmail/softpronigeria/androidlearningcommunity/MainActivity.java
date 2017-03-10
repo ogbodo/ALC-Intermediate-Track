@@ -115,9 +115,12 @@ public class MainActivity extends Activity {
 						"You Clicked at "
 								+ listOfDevelopers.get(position).getUsername(),
 						Toast.LENGTH_LONG).show();
-				Intent i = new Intent(getBaseContext(), ProfileDetails.class);
+				Intent i = new Intent(MainActivity.this, ProfileDetails.class);
 				// pass to another activity for profile viewing:
-				i.putExtra("UserProfile", listOfDevelopers.get(position));
+				i.putExtra("username", listOfDevelopers.get(position).getUsername());
+				i.putExtra("photoURL", listOfDevelopers.get(position).getImgBitmap());
+				i.putExtra("userURL", listOfDevelopers.get(position).getProfileURL());
+				
 				startActivity(i);
 
 			}

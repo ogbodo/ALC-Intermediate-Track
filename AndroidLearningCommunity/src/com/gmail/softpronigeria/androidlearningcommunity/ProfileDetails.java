@@ -2,6 +2,7 @@ package com.gmail.softpronigeria.androidlearningcommunity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 public class ProfileDetails extends Activity implements OnClickListener {
 
 	private UserProfile userProfile;
+	private Bundle intent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,18 +29,15 @@ public class ProfileDetails extends Activity implements OnClickListener {
 		TextView username = (TextView) findViewById(R.id.text_username);
 		ImageView imageView = (ImageView) findViewById(R.id.profile_image);
 
-		Bundle intent = getIntent().getExtras();
+		 intent = getIntent().getExtras();
 		if (intent != null) {
 
 			// To retrieve user profile details
-			userProfile = (UserProfile) getIntent().getSerializableExtra(
-					"UserProfile");
-
-		}
-		imageView.setImageBitmap(userProfile.getImgBitmap());
-		username.setText(userProfile.getUsername());
-		profileURL.setText(userProfile.getProfileURL());
-
+				
+		imageView.setImageBitmap((Bitmap) intent.get("photoURL"));
+		username.setText((CharSequence) intent.get("username"));
+		profileURL.setText((CharSequence) intent.get("userURL"));
+	}
 		profileURL.setOnClickListener(this);
 
 		share.setOnClickListener(this);
