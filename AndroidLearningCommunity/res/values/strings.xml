@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Android Learning Community</string>
+    <string name="img_description">Github Profile Photo</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">list of Java Developers in Lagos</string>
+    <string name="share">Share user profile</string>
+    <string name="profile_details">User profile Details</string>
+
+</resources>
