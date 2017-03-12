@@ -17,11 +17,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -32,7 +35,8 @@ import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
-	private ProgressDialog pdLoading;
+
+	private Context context;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,20 +45,24 @@ public class MainActivity extends Activity {
 
 		overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
 		setContentView(R.layout.activity_main);
+		context = this;
+		if (isConnectingToInternet()) {
 
-		try {
-			initializeActivity();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+				initializeActivity();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			displayMessage("Please make sure you are Connected to the Internet and try again.");
 		}
-
 	}
 
 	@Override
@@ -95,10 +103,8 @@ public class MainActivity extends Activity {
 	private void initializeActivity() throws JSONException,
 			InterruptedException, ExecutionException {
 
-		pdLoading = new ProgressDialog(this);
-		pdLoading.setCancelable(false);
-
-		final List<UserProfile> listOfDevelopers = getListOfDevelopers();
+		final List<UserProfile> listOfDevelopers = new QueryGitHubServer()
+				.execute(AppConfig.URL_LIST).get();
 
 		MyCustomList adapter = new MyCustomList(MainActivity.this,
 				listOfDevelopers);
@@ -114,13 +120,16 @@ public class MainActivity extends Activity {
 						MainActivity.this,
 						"You Clicked at "
 								+ listOfDevelopers.get(position).getUsername(),
-						Toast.LENGTH_LONG).show();
-				Intent i = new Intent(MainActivity.this, ProfileDetails.class);
+						Toast.LENGTH_SHORT).show();
+				Intent i = new Intent(getBaseContext(), ProfileDetails.class);
 				// pass to another activity for profile viewing:
-				i.putExtra("username", listOfDevelopers.get(position).getUsername());
-				i.putExtra("photoURL", listOfDevelopers.get(position).getImgBitmap());
-				i.putExtra("userURL", listOfDevelopers.get(position).getProfileURL());
-				
+				i.putExtra("username", listOfDevelopers.get(position)
+						.getUsername());
+				i.putExtra("photoURL", listOfDevelopers.get(position)
+						.getImgBitmap());
+				i.putExtra("userURL", listOfDevelopers.get(position)
+						.getProfileURL());
+
 				startActivity(i);
 
 			}
@@ -128,11 +137,12 @@ public class MainActivity extends Activity {
 
 	}
 
+	// display messages
 	private void displayMessage(String msg) {
 		AlertDialog.Builder alertInput = new AlertDialog.Builder(this);
-		// alertInput.setTitle("Welcome!");
+
 		alertInput.setInverseBackgroundForced(true);
-		// alertInput.setIcon(R.drawable.wecome_image);
+
 		alertInput.setMessage(msg);
 		alertInput.setPositiveButton("Ok",
 				new DialogInterface.OnClickListener() {
@@ -155,40 +165,11 @@ public class MainActivity extends Activity {
 		super.onResume();
 	}
 
-	/**
-	 * retrieve a list of Java Developers in Lagos using the Github API
-	 * 
-	 * @throws ExecutionException
-	 * @throws InterruptedException
-	 */
-	private List<UserProfile> getListOfDevelopers() throws JSONException,
-			InterruptedException, ExecutionException {
-
-		QueryGitHubServer queryGitHubServer = new QueryGitHubServer();
-
-		return queryGitHubServer.execute(AppConfig.URL_LIST).get();
-
-	}
-
-	/**
-	 * retrieves a Java Developer in Lagos using the Github API
-	 * 
-	 * @throws ExecutionException
-	 * @throws InterruptedException
-	 */
-	private void getDeveloper() throws JSONException, InterruptedException,
-			ExecutionException {
-
-		QueryGitHubServer queryGitHubServer = new QueryGitHubServer();
-
-		// return null;
-		// return queryGitHubServer.execute(AppConfig.URL_LIST).get().get(0);
-
-	}
-
 	// Make Http call to retrieve a list of Java Developers in Lagos
 	private class QueryGitHubServer extends
 			AsyncTask<String, Void, List<UserProfile>> {
+
+		ProgressDialog pdLoading = new ProgressDialog(context);
 
 		// Creating JSON Parser object
 		JSONParser jParser = new JSONParser();
@@ -200,6 +181,7 @@ public class MainActivity extends Activity {
 			// this method will be running on UI thread
 			pdLoading
 					.setMessage(" Retrieve a list of Java Developers in Lagos,please wait...");
+			pdLoading.setCancelable(false);
 			pdLoading.show();
 		}
 
@@ -258,41 +240,6 @@ public class MainActivity extends Activity {
 
 	}
 
-	// load user profile photo
-	private class LoadImageFromServer extends AsyncTask<String, Void, Bitmap> {
-
-		// Creating JSON Parser object
-		// JSONParser jParser = new JSONParser();
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-
-			// this method will be running on UI thread
-			// pdLoading.setMessage("Retrieving user photo,Please wait...");
-			// pdLoading.show();
-		}
-
-		@Override
-		protected Bitmap doInBackground(String... URL) {
-
-			// List<NameValuePair> params = new ArrayList<NameValuePair>();
-			// make HTTP call and return result
-			return downloadBitmap(URL[0]);
-
-		}
-
-		@Override
-		protected void onPostExecute(Bitmap result) {
-			super.onPostExecute(result);
-
-			// this method will be running on UI thread
-
-			// pdLoading.dismiss();
-		}
-
-	}
-
 	// download user profile photo
 	private Bitmap downloadBitmap(String url) {
 		HttpURLConnection urlConnection = null;
@@ -321,4 +268,21 @@ public class MainActivity extends Activity {
 		return null;
 	}
 
+	/**
+	 * Checking for all possible Internet providers
+	 * **/
+	private boolean isConnectingToInternet() {
+		ConnectivityManager connectivity = (ConnectivityManager) MainActivity.this
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (connectivity != null) {
+			NetworkInfo[] info = connectivity.getAllNetworkInfo();
+			if (info != null)
+				for (int i = 0; i < info.length; i++)
+					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+						return true;
+					}
+
+		}
+		return false;
+	}
 }

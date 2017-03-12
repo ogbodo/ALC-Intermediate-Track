@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".ProfileDetails" >
 
     <ImageView
         android:id="@+id/profile_image"
-        android:layout_width="255dp"
-        android:layout_height="106dp"
+        android:layout_width="284dp"
+        android:layout_height="0dp"
         android:layout_gravity="center"
+        android:layout_weight="0.98"
         android:contentDescription="@string/img_description" />
 
     <TextView
         android:id="@+id/text_username"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:textColor="#ffffff" />
+        android:gravity="center"
+        android:textColor="@color/skyblue_color"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/text_profile_url"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:textColor="#ffffff" />
+        android:autoLink="web"
+        android:gravity="center"
+        android:textColor="@color/skyblue_color" />
 
     <Button
         android:id="@+id/shear_profile"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:text="@string/share"
         android:textColor="@color/green_color"
         android:textSize="14sp"

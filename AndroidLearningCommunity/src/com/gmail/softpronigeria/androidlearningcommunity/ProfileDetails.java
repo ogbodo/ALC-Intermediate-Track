@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 public class ProfileDetails extends Activity implements OnClickListener {
 
-	private UserProfile userProfile;
-	private Bundle intent;
+	// private UserProfile userProfile;
+	private Bundle bundle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +29,15 @@ public class ProfileDetails extends Activity implements OnClickListener {
 		TextView username = (TextView) findViewById(R.id.text_username);
 		ImageView imageView = (ImageView) findViewById(R.id.profile_image);
 
-		 intent = getIntent().getExtras();
-		if (intent != null) {
+		bundle = getIntent().getExtras();
+		if (bundle != null) {
 
 			// To retrieve user profile details
-				
-		imageView.setImageBitmap((Bitmap) intent.get("photoURL"));
-		username.setText((CharSequence) intent.get("username"));
-		profileURL.setText((CharSequence) intent.get("userURL"));
-	}
+
+			imageView.setImageBitmap((Bitmap) bundle.get("photoURL"));
+			username.setText((String) bundle.get("username"));
+			profileURL.setText((String) bundle.get("userURL"));
+		}
 		profileURL.setOnClickListener(this);
 
 		share.setOnClickListener(this);
@@ -54,13 +54,13 @@ public class ProfileDetails extends Activity implements OnClickListener {
 			intent.putExtra(
 					Intent.EXTRA_TEXT,
 					"Check out this awesome developer @"
-							+ userProfile.getUsername() + ","
-							+ userProfile.getProfileURL() + ".");
+							+ (String) bundle.get("username") + ","
+							+ (String) bundle.get("userURL"));
 			startActivity(Intent.createChooser(intent, "Share"));
 
 		} else if (v.getId() == R.id.text_profile_url) {
 			Intent i = new Intent(Intent.ACTION_VIEW);
-			i.setData(Uri.parse(userProfile.getProfileURL()));
+			i.setData(Uri.parse((String) bundle.get("userURL")));
 			startActivity(i);
 		}
 	}
